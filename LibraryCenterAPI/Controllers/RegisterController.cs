@@ -12,31 +12,60 @@ namespace LibraryCenterAPI.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        // GET: api/Register
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private static List<Register> _registerdata = new List<Register>
         {
-            return new string[] { "value1", "value2" };
+            new Register {id= 1, Name= "Nelida", Tipe= "emprendedor"},
+            new Register {id=2, Name="Alex",  Tipe= "consumidor"},
+            new Register {id=3, Name="Jessica",  Tipe= "consumidor"},
+            new Register {id=4, Name="Wilman",  Tipe= "emprendedor"}
+        };
+        
+        // GET: api/Register / Hecho por CAMILA
+        [HttpGet]
+        public IEnumerable<Register> Get()
+        {
+            return _registerdata;
         }
 
-        // GET: api/Register/5
+        // GET: api/Register/5  /Hecho por Blas
         [HttpGet("{id}", Name = "GetRegister")]
         public Register Get(int id)
         {
             Register register = new Register();
             register.id = id;
-            register.Name = "Name";
-            register.Tipe = "Tipe";
+
+            // Generar un número aleatorio entre 0 y la cantidad de elementos en _registerdata
+            Random random = new Random();
+            int randomIndex = random.Next(0, _registerdata.Count);
+
+            // Obtener el elemento aleatorio de la lista
+            Register randomRegister = _registerdata[randomIndex];
+
+            // Asignar el nombre y tipo aleatorios al registro
+            register.Name = randomRegister.Name;
+            register.Tipe = randomRegister.Tipe;
+
             return register;
         }
 
-        // POST: api/Register
+        // POST: api/Register   /Hecho por Jose
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Register register)
         {
+            if (register == null)
+            {
+                return BadRequest();
+            }
+
+            Register newRegister = new Register
+            {
+                Name = register.Name,
+                Tipe = register.Tipe
+            };
+            return Ok();
         }
 
-        // PUT: api/Register/5  JesusLazo
+        // PUT: api/Register/5   /Hecho por JesusLazo
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Register register)
         {
@@ -49,10 +78,20 @@ namespace LibraryCenterAPI.Controllers
         }
 
 
-        // DELETE: api/Register/5
+        // DELETE: api/Register/5   /Hecho por Frezzia
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public StatusCodeResult Delete(Register register)
         {
+            try
+            {
+                if (register.id == 0)
+                    return StatusCode(400);
+                return StatusCode(200);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
